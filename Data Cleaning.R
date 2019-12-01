@@ -50,6 +50,7 @@ smallCorpus <- tm_map(smallCorpus, stripWhitespace)
 # before we stem, need to create a destemming dictionary
 # stupid variable names because this is a change
 dictCorpus <- smallCorpus
+saveRDS(dictCorpus,"dictCorpus.RDS")
 
 # will move the stem to the ngram file after I check that this works. 
 smallCorpus <- tm_map(smallCorpus, stemDocument)
