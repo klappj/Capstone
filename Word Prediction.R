@@ -62,11 +62,14 @@ getGuesses <- function(input) {
   if (dim(temp1)[1] > 100) { temp1 <- temp1[1:100,]}
   
   guesses <- rbind(temp1[,c("String","Count","p")],temp2[,c("String","Count","p")],temp3[,c("String","Count","p")])
+  # Now order them, because I confused the snot out of myself earlier
+  guesses <- guesses[order(-guesses$p),]
   return(guesses)
 }
 
 
-# find last word in dictionary
+# find the top three word from the guesses file
+
 if (dim(guesses)[1] == 0) {
   # If we have no guesses, at all
   output = c("the","to","and")
@@ -76,6 +79,8 @@ if (dim(guesses)[1] == 0) {
   output = stemDict[stemDict$Stem == firstStem,"String"]
   #if (dim(output)<3)
 }
+
+
 
 # the next function should, given the list of guesses, and the letters the 
 # input is givng as typing, do a predictive typing. 
