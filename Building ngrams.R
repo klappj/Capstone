@@ -24,6 +24,10 @@ ngramTokenizer <- function(theCorpus, ngramCount) {
   ngramFunction
 }
 
+stemDict <- ngramTokenizer(dictCorpus,1)
+stemDict$Stem <- stemDocument(as.character(stemDict[,"String"]))
+saveRDS(stemDict, file = "stemDict.RDS")
+
 onegram <- ngramTokenizer(smallCorpusDF, 1)
 saveRDS(onegram, "onegram.RD")
 
@@ -33,7 +37,7 @@ saveRDS(digram, file = "digram.RDS")
 
 trigram <- ngramTokenizer(smallCorpusDF, 3)
 trigram$Two <- word(trigram$String, 1,2)
-
+saveRDS(trigram, file = "trigram.RDS")
 
 fourgram <- ngramTokenizer(smallCorpusDF, 4)
 fourgram$Three <- word(fourgram$String ,1,3)
