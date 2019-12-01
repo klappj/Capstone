@@ -2,6 +2,11 @@
 # with luck, it will also be able to do some prediction as you type
 # but that is black magic.
 
+# This has 3 functions:
+# cleanInput(text) returns text that's cleaned and stemmed to match ngrams
+# getGuesses(text) returns a sorted frame of Stems and probabilities
+# getWords(guesses) returns 3 words from that getGuesses result 
+
 library(tm)
 library(stringr)
 
@@ -102,12 +107,7 @@ getwords <- function(guesses) {
   }
 }                    
 
-
-
 # the next function should, given the list of guesses, and the letters the 
 # input is givng as typing, do a predictive typing. 
-# this might require building my own dictionary again, before the text was 
-# cleaned ... that would give word frequencies. Other thought is to just
-# find a dictionary somewhere else.
 
 
