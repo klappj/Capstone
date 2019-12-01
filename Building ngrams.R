@@ -26,10 +26,16 @@ ngramTokenizer <- function(theCorpus, ngramCount) {
 
 onegram <- ngramTokenizer(smallCorpusDF, 1)
 saveRDS(onegram, "onegram.RD")
+
 digram <- ngramTokenizer(smallCorpusDF, 2)
+digram$One <- word(digram$String, 1, 1)
 saveRDS(digram, file = "digram.RDS")
+
 trigram <- ngramTokenizer(smallCorpusDF, 3)
-saveRDS(trigram, file = "trigram.RDS")
+trigram$Two <- word(trigram$String, 1,2)
+
+
 fourgram <- ngramTokenizer(smallCorpusDF, 4)
+fourgram$Three <- word(fourgram$String ,1,3)
 saveRDS(fourgram, file = "fourgram.RDS")
 
