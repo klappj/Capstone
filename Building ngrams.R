@@ -18,7 +18,8 @@ ngramTokenizer <- function(theCorpus, ngramCount) {
                                                delimiters = " \\r\\n\\t.,;:\"()?!"))
   ngramFunction <- data.frame(table(ngramFunction))
   ngramFunction <- ngramFunction[order(ngramFunction$Freq, 
-                                       decreasing = TRUE),][1:10,]
+                                       decreasing = TRUE),]
+  # why was this appended to previous line? Maybe to give only top ten? [1:10,]
   colnames(ngramFunction) <- c("String","Count")
   ngramFunction
 }
