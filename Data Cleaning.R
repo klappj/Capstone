@@ -1,4 +1,3 @@
-# Week 2 things to try
 # load the documents, create a dictionary, count 2-grams and 3-grams
 # templated from https://eight2late.wordpress.com/2015/05/27/a-gentle-introduction-to-text-mining-using-r/
 
@@ -41,7 +40,7 @@ smallCorpus = tm_map(smallCorpus, content_transformer(function(x) iconv(x, to="U
 
 # get rid of bad words, URLs, punctuation and extra white space. 
 smallCorpus <- tm_map(smallCorpus, content_transformer(removePunctuation))
-smallCorpus <- tm_map(smallCorpus, removeWords, profanityWords)
+smallCorpus <- tm_map(smallCorpus, removeWords, badWords[,1])
 smallCorpus <- tm_map(smallCorpus, content_transformer(removeNumbers))
 removeURL <- function(x) gsub("http[[:alnum:]]*", "", x) 
 smallCorpus <- tm_map(smallCorpus, content_transformer(removeURL))
