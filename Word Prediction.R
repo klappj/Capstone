@@ -5,8 +5,6 @@
 library(tm)
 library(stringr)
 
-
-
 # load files
 stemDict <- readRDS(file = "stemDict.RDS")
 onegram <- readRDS(file = "onegram.RDS")
@@ -69,16 +67,40 @@ getGuesses <- function(input) {
 
 
 # find the top three word from the guesses file
-
-if (dim(guesses)[1] == 0) {
-  # If we have no guesses, at all
-  output = c("the","to","and")
-} else {
-  # do somemthing with guesses$String[1]
+getwords <- function(guesses) {
+  if (dim(guesses)[1] == 0) {
+    # If we have no guesses, at all
+    return(c("the","to","and"))
+  }
   firstStem <- word(guesses[1,"String"],-1)
   output = stemDict[stemDict$Stem == firstStem,"String"]
-  #if (dim(output)<3)
-}
+  if (length(output) >= 3){
+    return(output[1:3])
+  }
+  # so the first guess didn't have enough; Now to think.
+    if (dim(guesses)[1] > 1) {
+    nextStems <- word(guesses[-1,"String"],-1)
+    # if there are more than 3 stems, we don't care about the rest
+    # and we don't want to waste computational time looking them up in the
+    # stem dictionary
+    if (length(nextStems) > 3) {
+      nextStems <- nextStems[1:3]
+    }
+    # pick out those stems from the whole dataframe
+    nextStems <- stemDict[stemDict$Stem %in% nextStems,]
+    # nextStems <- nextStems[order(-nextStem$Count)] # This is redundant because ngrams are already sorted
+    if (dim(nextStems)[1] > 3) {
+      nextStems <- nextStems[1:3,]
+    }
+    output = c(as.character(output), as.character(nextStems$String))    
+    if(length(output) > 2) {
+      return(output)
+    }
+    # well shit, let's just append some common words to get 3 answer
+    output = c(output, "the", "to","and")
+    return(output[1:3])
+  }
+}                    
 
 
 
