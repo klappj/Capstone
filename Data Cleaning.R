@@ -45,8 +45,14 @@ smallCorpus <- tm_map(smallCorpus, removeWords, profanityWords)
 smallCorpus <- tm_map(smallCorpus, content_transformer(removeNumbers))
 removeURL <- function(x) gsub("http[[:alnum:]]*", "", x) 
 smallCorpus <- tm_map(smallCorpus, content_transformer(removeURL))
-smallCorpus <- tm_map(smallCorpus, stemDocument)
 smallCorpus <- tm_map(smallCorpus, stripWhitespace)
+
+# before we stem, need to create a destemming dictionary
+# stupid variable names because this is a change
+dictCorpus <- smallCorpus
+
+# will move the stem to the ngram file after I check that this works. 
+smallCorpus <- tm_map(smallCorpus, stemDocument)
 
 # Save this crap before the computer blows up.
 # Should "crap" be in the badwords list?
