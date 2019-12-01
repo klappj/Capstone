@@ -5,8 +5,8 @@ library(RWeka)
 
 
 smallCorpus <- readRDS("cleanedCorpus.RDS")
-smallCorpusDF <-data.frame(text=unlist(sapply(smallCorpus,`[`, "content")), 
-                           stringsAsFactors = FALSE)
+#smallCorpusDF <-data.frame(text=unlist(sapply(smallCorpus,`[`, "content")), 
+#                           stringsAsFactors = FALSE)
 
 # that didn't work, trying
 smallCorpusDF <- data.frame(smallCorpus$content, stringsAsFactors = FALSE)
@@ -29,7 +29,7 @@ stemDict$Stem <- stemDocument(as.character(stemDict[,"String"]))
 saveRDS(stemDict, file = "stemDict.RDS")
 
 onegram <- ngramTokenizer(smallCorpusDF, 1)
-saveRDS(onegram, "onegram.RD")
+saveRDS(onegram, "onegram.RDS")
 
 digram <- ngramTokenizer(smallCorpusDF, 2)
 digram$One <- word(digram$String, 1, 1)
