@@ -72,7 +72,7 @@ getGuesses <- function(input) {
 
 
 # find the top three word from the guesses file
-getwords <- function(guesses) {
+getWords <- function(guesses) {
   if (dim(guesses)[1] == 0) {
     # If we have no guesses, at all
     return(c("the","to","and"))
