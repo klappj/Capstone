@@ -1,0 +1,77 @@
+---
+title: "Milestone Report"
+author: "John Klapp"
+date: "December 18, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+```
+
+## Week 2 Milestone
+This milestone report described both what was done through the Week 1 and 2 work, and planning done towards the rest of the project. 
+
+### Week 1 Task 0: Understanding the problem
+In short, the objective in this capstone project is to create a predictive text algorithm. The objectives are very open-ended, as is targeted harware. Since I'm using largerly my work laptop to do this, and it is severely limited by both low RAM and an aggressive anti-virus software, 
+
+### Week 2 Task 1: Getting and Cleaining the Data
+In the interest of efficiency, and the philosophy of using the best tool for the job, the zip file was downloaded with wget, and unzipped using the OS native tool. From there, the three english files were evaluated using the code block below. 
+
+```{r LoadData, eval=FALSE}
+
+scanTwitter = function() {
+  con <- file("en_US.twitter.txt", "r")
+  numLines = as.integer(0)
+  maxLength = as.integer(0)
+  hasHate = as.integer(0)
+  hasLove = as.integer(0)
+  hasPhrase = as.integer(0)
+  
+  
+  while ( TRUE ) {
+    line = readLines(con, n = 1)
+    if ( length(line) == 0 ) {
+      break
+    }
+    maxLength = max(maxLength,nchar(line))
+    numLines = numLines + 1
+    hasHate = hasHate + grepl("hate", line)
+    hasLove = hasLove + grepl("love", line)
+    hasPhrase = hasPhrase + grepl("A computer once beat me at chess, but it was no match for me at kickboxing",line)
+    
+    if(grepl("biostats",line)) {print(line)}
+    #if (numLines > 1000) {break} # This just to read the first thousand to test
+    
+  }
+  print(maxLength)
+  print(numLines)
+  print(hasHate)
+  print(hasLove)
+  print(hasPhrase)
+  close(con)
+}
+```
+
+This code gave the following results: 
+
+Twitter: 
+[1] maxLength 213
+[1] numLines 2360148
+[1] hasHate 22138
+[1] hasLove 90956
+[1] hasPhrase 3
+
+News:
+[1] maxLength 5760
+[1] numLines 77259
+[1] hasHate 322
+[1] hasLove 1105
+
+Blogs:
+[1] maxLength 40835
+[1] numLines 899288
+[1] hasHate 11098
+[1] hasLove 49167
+
+### Week 2 Task 2: 
