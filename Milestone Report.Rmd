@@ -55,23 +55,13 @@ scanTwitter = function() {
 
 This code gave the following results: 
 
-Twitter: 
-[1] maxLength 213
-[1] numLines 2360148
-[1] hasHate 22138
-[1] hasLove 90956
-[1] hasPhrase 3
+```{r Quiz1Results}
+Table1 <- data.frame( Twitter = c(213, 2360148, 22138, 90956), News = c(5760, 77259, 322, 1105), Blogs = c(40835, 899288, 11098, 49167))
+row.names(Table1) <- c("maxLength","NumLines","hasHate","hasLove")
+kable(Table1)
 
-News:
-[1] maxLength 5760
-[1] numLines 77259
-[1] hasHate 322
-[1] hasLove 1105
+```
 
-Blogs:
-[1] maxLength 40835
-[1] numLines 899288
-[1] hasHate 11098
-[1] hasLove 49167
+
 
 ### Week 2 Task 2: 
