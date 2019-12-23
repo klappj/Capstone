@@ -1,10 +1,10 @@
 # This does the data analysis stuff from week 2.
 library(tm)
 library(RWeka)
+library(stringr)
 
 
-
-smallCorpus <- readRDS("cleanedCorpus.RDS")
+vsmallCorpus <- readRDS("cleanedCorpus.RDS")
 #smallCorpusDF <-data.frame(text=unlist(sapply(smallCorpus,`[`, "content")), 
 #                           stringsAsFactors = FALSE)
 
