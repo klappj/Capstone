@@ -44,6 +44,7 @@ smallCorpus <- tm_map(smallCorpus, removeWords, badWords[,1])
 smallCorpus <- tm_map(smallCorpus, content_transformer(removeNumbers))
 removeURL <- function(x) gsub("http[[:alnum:]]*", "", x) 
 smallCorpus <- tm_map(smallCorpus, content_transformer(removeURL))
+smallCorups <- tm_map(smallCorpus, dim(tolower))
 smallCorpus <- tm_map(smallCorpus, stripWhitespace)
 
 # before we stem, need to create a destemming dictionary
