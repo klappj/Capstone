@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
 ```
 
-## Week 2 Milestone
+## Week 2 Milestone Report
 This milestone report described both what was done through the Week 1 and 2 work, and planning done towards the rest of the project. 
 
 ### Week 1 Task 0: Understanding the problem
@@ -27,8 +27,7 @@ scanTwitter = function() {
   hasHate = as.integer(0)
   hasLove = as.integer(0)
   hasPhrase = as.integer(0)
-  
-  
+
   while ( TRUE ) {
     line = readLines(con, n = 1)
     if ( length(line) == 0 ) {
@@ -42,26 +41,56 @@ scanTwitter = function() {
     
     if(grepl("biostats",line)) {print(line)}
     #if (numLines > 1000) {break} # This just to read the first thousand to test
-    
   }
-  print(maxLength)
-  print(numLines)
-  print(hasHate)
-  print(hasLove)
-  print(hasPhrase)
   close(con)
 }
 ```
 
 This code gave the following results: 
 
-```{r Quiz1Results}
+
+### Week 2 Task 2: Exploratory Data Analysis
+This task was interleaved with task 1; the simple analysis above was acomplished before much data cleaning. Unsurprisingly, Twitter has the shortest lines due to the charachter limit. That the longest string of text was a blog post is also unsurprising; most blogs have neither an editor nor the requirement to fit in print. Both Twitter and the blogs had a love/hate ratio above 4, but the news is much less inclined to use the word "love" with a love/hate ratio of 3.4. 
+
+```{r Quiz1Results, echo=FALSE}
+library(knitr)
 Table1 <- data.frame( Twitter = c(213, 2360148, 22138, 90956), News = c(5760, 77259, 322, 1105), Blogs = c(40835, 899288, 11098, 49167))
 row.names(Table1) <- c("maxLength","NumLines","hasHate","hasLove")
 kable(Table1)
 
 ```
 
+### Week 2 Task 3: Modeling
+The major objective of this task was to evaluate and explore ngram, the sequences of words in these collections of text. Many examples of the *tm* library include removing words like *the* and *and* as they don't contribute largely to natural language processing. I chose to include them, as they are used in speech. 
 
+A challenge is that the computer I'm using can't reasonably manipulate the entire dataset at once, so any word cleaning required (in R) copying the entire dataset, which in turn required a few gigabytes of swapping (pushing memory to/from the hard drive) and it died. So, for this, I chose to grab only 10% of the data to do the cleaning and extracting the ngrams (phrases) and count those.
 
-### Week 2 Task 2: 
+```{r ngramTokenizer, eval=FALSE}
+ngramTokenizer <- function(theCorpus, ngramCount) {
+  ngramFunction <- NGramTokenizer(theCorpus, 
+                                  Weka_control(min = ngramCount, max = ngramCount, 
+                                               delimiters = " \\r\\n\\t.,;:\"()?!"))
+  ngramFunction <- data.frame(table(ngramFunction))
+  ngramFunction <- ngramFunction[order(ngramFunction$Freq, 
+                                       decreasing = TRUE),]
+  colnames(ngramFunction) <- c("String","Count")
+  ngramFunction
+}
+```
+
+There are some deliberate decisions in here. One mistake I made was with the recursive algorithm not using the results of the previous level, but that wasn't, strangely, significantly expensive. With sampling 10% of the corupus, I got each of the 4 levels to run in about 5 minutes with minimal swapping. For an example of the results, the table below shows the 20 most common four word strings (the sorting is the order of first appearance). From this start, it appears that the decision to keep words like "the" and "of" in the corpus is validated, as those words appear very often in the language. 
+
+```{r graph, echo=FALSE}
+library("ggplot2")
+fourgram <- readRDS("fourgram.RDS")
+ggplot(data = fourgram[1:20,], aes (x = String, y = Count))+geom_bar(stat="identity")+coord_flip()
+```
+
+## Way Forward
+My planned way forward is to develop a shiny app that takes user input from a text box, and looks for the most likely next word. Below are the big pieces I'm thinking about:
+
+* First pass of the algorithm waits for a space bar to guess at next word
+* When a 3 word string doesn't strongly predict the following word, using only the last 2 words to predict the next word
+* Once those are working, then extend the algorithm to pick the most likely next word as the next word is being typed (match the letters as they're typed)
+
+I appreciate your thoughts and feedback.
