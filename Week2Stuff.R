@@ -19,8 +19,9 @@ rm(news)
 
 twitter <- readLines("./corpus/en_US.twitter.txt", 
                      encoding = "UTF-8", skipNul=TRUE)
-TwitterSmple <- twitter[sample(1:length(twitter),10000)]
+TwitterSample <- twitter[sample(1:length(twitter),10000)]
 rm(twitter)
+# that actually worked inside of 5 seconds
 
 # put it all together
 
@@ -30,5 +31,21 @@ rm(BlogSample)
 rm(NewsSample)
 rm(TwitterSample)
 
+
+# now to clean this crap up
+badWords <- read.table("badwords.txt", header = FALSE)
+
+smallCorpus <- Corpus(VectorSource(textSample))
+
+smallCorpus = tm_map(smallCorpus, content_transformer(function(x) iconv(x, to="UTF-8", sub="byte")))
+
+# get rid of bad words, URLs, punctuation and extra white space. 
+smallCorpus <- tm_map(smallCorpus, content_transformer(removePunctuation))
+smallCorpus <- tm_map(smallCorpus, removeWords, profanityWords)
+smallCorpus <- tm_map(smallCorpus, content_transformer(removeNumbers))
+removeURL <- function(x) gsub("http[[:alnum:]]*", "", x) 
+smallCorpus <- tm_map(smallCorpus, content_transformer(removeURL))
+smallCorpus <- tm_map(smallCorpus, stemDocument)
+smallCorpus <- tm_map(smallCorpus, stripWhitespace)
 
 
