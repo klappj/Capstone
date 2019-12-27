@@ -2,35 +2,80 @@
 
 library(shiny)
 library(ggplot2)
+library(tm)
+library(stringr)
 
 server <- function(input, output) {
   observe({
     phrase <- input$inputText
+    guesses <- getGuesses(phrase)
+    
+    
     output$plotOutput <- renderPlot(
-    ggplot(data = data.frame(x=rnorm(300)), aes(x=x))+geom_histogram()+ggtitle(input$inputText))
+      #ggplot(data = data.frame(x=rnorm(300)), aes(x=x))+geom_histogram()+ggtitle(input$inputText))
+      ggplot(data = guesses[1:20,], aes(x = String, y = p))+geom_bar(stat = "identity")+coord_flip())
 
   })
-    
-  # output$plotOutput <- renderPlot(
-  #   if(input$inputText != ""){
-  #     
-  #     matches = fourgram[foourgram$String == phrase,]
-  #     ggplot(data = matches[1:20,], aes(x = String, y = Count))
-  #     +geom_bar(stat="identity")+coord_flip()
-  #     
-  #   }
-  # )
   # insert a line where we output something
-  
-  
+
   }
 
-# find the top three word from the guesses file
+
+
+getGuesses <- function(input) {
+  # this function creates a dataframe of guesses from the last 3 words of
+  # the input string. 
+  # This worked when the input was one word (threw some warnings)
+  # this worked with a nonsenes phrase, returned a 0 length vector
+  
+  input <- cleanInput(input)
+  
+  inputLength <- sapply(strsplit(input, " "), length)
+  lastword <- word(input, -1)
+  #if inputLength > 1
+  last2word <- paste(word(input, -2), lastword, sep = " ")
+  
+  #if inputLength > 2
+  last3word <- paste(word(input, -3), last2word, sep = " ")
+  
+  onegramCount <- onegram[onegram$String == lastword,]$Count
+  digramCount <- digram[digram$String == last2word,]$Count
+  trigramCount <- trigram[trigram$String == last3word,]$Count
+  
+  
+  temp3 <- fourgram[fourgram$Three == last3word,]
+  temp3$p <- temp3$Count / trigramCount
+  
+  temp2 <- trigram[trigram$Two == last2word,]
+  temp2$p <- temp2$Count/digramCount
+  
+  temp1 <- digram[digram$One == lastword,]
+  temp1$p <- temp1$Count / onegramCount
+  
+  # first hundred words should be good enough
+  if (dim(temp3)[1] > 100) { temp3 <- temp3[1:100,]}
+  if (dim(temp2)[1] > 100) { temp2 <- temp2[1:100,]}
+  if (dim(temp1)[1] > 100) { temp1 <- temp1[1:100,]}
+  
+  guesses <- rbind(temp1[,c("String","Count","p")],temp2[,c("String","Count","p")],temp3[,c("String","Count","p")])
+  # Now order them, because I confused the snot out of myself earlier
+  guesses <- guesses[order(-guesses$p),]
+  return(guesses)
+}
+
+
+
+
+# Because the lookup table is stemmed, this function finds the 
+# top three word from the guesses table
+# this function takes in a table of guesses and tries to return words
+
 getWords <- function(guesses) {
   if (dim(guesses)[1] == 0) {
     # If we have no guesses, at all
     return(c("the","to","and"))
   }
+  # what was this? We didn't 
   firstStem <- word(guesses[1,"String"],-1)
   output = stemDict[stemDict$Stem == firstStem,"String"]
   if (length(output) >= 3){
