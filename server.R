@@ -4,23 +4,23 @@ library(shiny)
 library(ggplot2)
 library(tm)
 library(stringr)
+library(RWeka)
 
-server <- function(input, output) {
-  observe({
-    phrase <- input$inputText
-    guesses <- getGuesses(phrase)
-    
-    
-    output$plotOutput <- renderPlot(
-      #ggplot(data = data.frame(x=rnorm(300)), aes(x=x))+geom_histogram()+ggtitle(input$inputText))
-      ggplot(data = guesses[1:20,], aes(x = String, y = p))+geom_bar(stat = "identity")+coord_flip())
-
-  })
-  # insert a line where we output something
-
-  }
+# onegram, digram, trigram, fourgram
+onegram <- readRDS("onegram.RDS")
+digram <- readRDS("digram.RDS")
+trigram <- readRDS("trigram.RDS")
+fourgram <- readRDS("fourgram.RDS")
 
 
+cleanInput <- function(text){
+  textInput <- tolower(text)
+  textInput <- removePunctuation(textInput)
+  textInput <- removeNumbers(textInput)
+  textInput <- str_replace_all(textInput, "[^[:alnum:]]", " ")
+  textInput <- stripWhitespace(textInput)
+  return(textInput)
+}
 
 getGuesses <- function(input) {
   # this function creates a dataframe of guesses from the last 3 words of
@@ -105,3 +105,19 @@ getWords <- function(guesses) {
     return(output[1:3])
   }
 }                    
+
+
+server <- function(input, output) {
+  observe({
+    phrase <- input$inputText
+    guesses <- getGuesses(phrase)
+    
+    
+    output$plotOutput <- renderPlot(
+      #ggplot(data = data.frame(x=rnorm(300)), aes(x=x))+geom_histogram()+ggtitle(input$inputText))
+      ggplot(data = guesses[1:20,], aes(x = String, y = p))+geom_bar(stat = "identity")+coord_flip())
+
+  })
+  # insert a line where we output something
+
+  }
